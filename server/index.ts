@@ -324,4 +324,101 @@ const menu: { categories: MenuCategory[] } = {
           price: 4.5,
           allergens: ["lactose", "egg"],
           isVegetarian: true,
-          is
+          isGlutenFree: true,
+        },
+      ],
+    },
+  ],
+};
+
+// ── App setup ────────────────────────────────────────────────────────────────
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// ── Routes ───────────────────────────────────────────────────────────────────
+
+// Menu
+app.get("/api/menu", (_req: Request, res: Response) => {
+  res.json(menu);
+});
+
+// Reservations
+app.post("/api/reservations", (req: Request, res: Response) => {
+  const { name, email, phone, date, time, people, notes } =
+    req.body as ReservationBody;
+
+  if (!name || !email || !phone || !date || !time || !people) {
+    res.status(400).json({ error: "Faltan campos obligatorios" });
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    res.status(400).json({ error: "Email no válido" });
+    return;
+  }
+
+  const peopleNum = Number(people);
+  if (isNaN(peopleNum) || peopleNum < 1 || peopleNum > 20) {
+    res.status(400).json({ error: "Número de personas no válido" });
+    return;
+  }
+
+  const id = crypto.randomUUID();
+  insertReservation.run({
+    id,
+    name,
+    email,
+    phone,
+    date,
+    time,
+    people: peopleNum,
+    notes: notes ?? null,
+  });
+
+  res.status(201).json({ id, message: "Reserva creada con éxito" });
+});
+
+// Contact
+app.post("/api/contact", (req: Request, res: Response) => {
+  const { name, email, message } = req.body as ContactBody;
+
+  if (!name || !email || !message) {
+    res.status(400).json({ error: "Faltan campos obligatorios" });
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    res.status(400).json({ error: "Email no válido" });
+    return;
+  }
+
+  const id = crypto.randomUUID();
+  insertContact.run({ id, name, email, message });
+
+  res.status(201).json({ id, message: "Mensaje enviado con éxito" });
+});
+
+// Serve frontend in production
+const distPath = path.join(__dirname, "../dist");
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get("*", (_req: Request, res: Response) => {
+    res.sendFile(path.join(distPath, "index.html"));
+  });
+}
+
+// Error handler
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Error interno del servidor" });
+});
+
+const PORT = process.env.PORT ?? 3001;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
