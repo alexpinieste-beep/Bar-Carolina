@@ -1,9 +1,9 @@
 import { motion, type Variants } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Twitter, Navigation } from "lucide-react";
 
-const LAT = 40.4817;
-const LON = -3.3639;
-const LABEL = "Bar Carolina, Alcalá de Henares";
+const LAT = 40.4776862;
+const LON = -3.362174;
+const LABEL = "Bar Carolina, C. Murano 6, Alcalá de Henares";
 
 function getMapsUrl(): string {
   const ua = navigator.userAgent;
@@ -236,13 +236,13 @@ const Footer = () => {
                     style={{ color: "#F5E6D3" }}
                     className="text-sm opacity-90"
                   >
-                    Alcalá de Henares
+                    C. Murano, 6, 28804
                   </p>
                   <p
                     style={{ color: "#F5E6D3" }}
                     className="text-sm opacity-90"
                   >
-                    Madrid, España
+                    Alcalá de Henares, Madrid
                   </p>
                 </div>
               </motion.div>
