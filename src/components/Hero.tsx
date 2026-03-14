@@ -1,7 +1,19 @@
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown, UtensilsCrossed, CalendarDays } from "lucide-react";
 
 const Hero = () => {
+  const heroRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 0.6], ["0%", "-8%"]);
+
   const scrollToMenu = () => {
     const menuSection = document.getElementById("carta");
     if (menuSection) {
@@ -22,13 +34,17 @@ const Hero = () => {
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap"
         rel="stylesheet"
       />
-      <section className="relative w-full h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <img
+      <section
+        ref={heroRef}
+        className="relative w-full h-screen min-h-[600px] flex items-center justify-center overflow-hidden"
+      >
+        {/* Background Image with parallax */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <motion.img
             src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1920&q=80"
             alt="Interior del Bar Carolina"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-center scale-110"
+            style={{ y: bgY }}
           />
           {/* Dark overlay with warm tint */}
           <div
@@ -54,8 +70,11 @@ const Hero = () => {
           style={{ backgroundColor: "#C4922A" }}
         />
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 max-w-5xl mx-auto">
+        {/* Content — fades and rises on scroll */}
+        <motion.div
+          style={{ opacity: contentOpacity, y: contentY }}
+          className="relative z-10 flex flex-col items-center justify-center text-center px-6 max-w-5xl mx-auto"
+        >
           {/* Decorative element */}
           <motion.div
             initial={{ opacity: 0, scaleX: 0 }}
@@ -198,7 +217,7 @@ const Hero = () => {
           >
             Abierto todos los días · 08:00 – 00:00
           </motion.p>
-        </div>
+        </motion.div>
 
         {/* Scroll indicator */}
         <motion.div

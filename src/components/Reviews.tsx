@@ -188,15 +188,21 @@ export default function Reviews() {
         </motion.div>
 
         {/* Carousel */}
-        <div
+        <motion.div
           className="relative"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
           {/* Card container */}
-          <div
+          <motion.div
             className="relative overflow-hidden rounded-2xl shadow-lg min-h-64"
             style={{ backgroundColor: "#FDFAF6" }}
+            whileHover={{ y: -4, boxShadow: "0 16px 48px rgba(44,24,16,0.14)" }}
+            transition={{ duration: 0.3 }}
           >
             <AnimatePresence custom={direction} mode="wait">
               <motion.div
@@ -249,7 +255,7 @@ export default function Reviews() {
                 </div>
               </motion.div>
             </AnimatePresence>
-          </div>
+          </motion.div>
 
           {/* Navigation buttons */}
           <button
@@ -268,7 +274,7 @@ export default function Reviews() {
           >
             <ChevronRight className="w-5 h-5" />
           </button>
-        </div>
+        </motion.div>
 
         {/* Dot indicators */}
         <div className="flex justify-center gap-2 mt-7">
@@ -291,4 +297,18 @@ export default function Reviews() {
 
         {/* Progress bar */}
         {!paused && (
-          <div className="mt-4 max-w-xs mx-auto h-0.5 rounded-full overflow
+          <div className="mt-8 max-w-xs mx-auto h-0.5 rounded-full overflow-hidden" style={{ backgroundColor: "rgba(196,146,42,0.2)" }}>
+            <motion.div
+              key={current}
+              initial={{ x: "-100%" }}
+              animate={{ x: "0%" }}
+              transition={{ duration: 5, ease: "linear" }}
+              className="h-full w-full"
+              style={{ backgroundColor: "#C4922A" }}
+            />
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}

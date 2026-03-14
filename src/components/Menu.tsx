@@ -150,9 +150,10 @@ const categoryIcons: Record<string, string> = {
 function MenuItemCard({ item, index }: { item: MenuItem; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.07, ease: "easeOut" }}
+      initial={{ opacity: 0, x: index % 2 === 0 ? -40 : 40, y: 10 }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true, amount: 0.1 }}
+      transition={{ duration: 0.5, delay: index * 0.07, ease: "easeOut" }}
       className="relative group"
     >
       <div
@@ -231,7 +232,8 @@ function Menu() {
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
@@ -265,7 +267,8 @@ function Menu() {
         {/* Category Tabs */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.15 }}
           className="flex flex-wrap justify-center gap-2 mb-10"
         >
@@ -310,4 +313,32 @@ function Menu() {
             style={{ backgroundColor: "#e7ddd4" }}
           />
           <span
-            className="text
+            className="text-xs uppercase tracking-widest font-semibold"
+            style={{ color: "#8B1A1A" }}
+          >
+            {activeCategory}
+          </span>
+          <div
+            className="flex-1 h-px"
+            style={{ backgroundColor: "#e7ddd4" }}
+          />
+        </div>
+
+        {/* Items Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <AnimatePresence mode="popLayout">
+            {activeData?.items.map((item, index) => (
+              <MenuItemCard
+                key={`${activeCategory}-${item.name}`}
+                item={item}
+                index={index}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default Menu;

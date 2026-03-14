@@ -104,9 +104,10 @@ export default function Reservation() {
     >
       <div className="w-full max-w-2xl">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
         >
           {/* Header */}
           <div className="text-center mb-10">
@@ -145,11 +146,12 @@ export default function Reservation() {
 
           {/* Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            initial={{ opacity: 0, scale: 0.93, y: 30, rotateX: 3 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ delay: 0.3, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            style={{ transformPerspective: 1000, backgroundColor: "rgba(0,0,0,0.25)", backdropFilter: "blur(10px)" }}
             className="rounded-2xl overflow-hidden"
-            style={{ backgroundColor: "rgba(0,0,0,0.25)", backdropFilter: "blur(10px)" }}
           >
             <div className="p-8 md:p-10">
               <AnimatePresence mode="wait">
@@ -282,4 +284,185 @@ export default function Reservation() {
                           </span>
                         </label>
                         <input
-                          type="
+                          type="email"
+                          name="email"
+                          value={form.email}
+                          onChange={handleChange}
+                          required
+                          placeholder="tu@email.com"
+                          className={inputBase}
+                        />
+                      </motion.div>
+                    </div>
+
+                    {/* Row 2: Teléfono + Personas */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <motion.div
+                        initial={{ opacity: 0, x: -15 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        <label className={labelBase}>
+                          <span className="flex items-center gap-1.5">
+                            <Phone className="w-3 h-3" />
+                            Teléfono
+                          </span>
+                        </label>
+                        <input
+                          type="tel"
+                          name="telefono"
+                          value={form.telefono}
+                          onChange={handleChange}
+                          required
+                          placeholder="+34 600 000 000"
+                          className={inputBase}
+                        />
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, x: 15 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.25 }}
+                      >
+                        <label className={labelBase}>
+                          <span className="flex items-center gap-1.5">
+                            <Users className="w-3 h-3" />
+                            Personas
+                          </span>
+                        </label>
+                        <div className="relative">
+                          <select
+                            name="personas"
+                            value={form.personas}
+                            onChange={handleChange}
+                            required
+                            className={`${inputBase} appearance-none`}
+                          >
+                            <option value="" disabled hidden>
+                              Selecciona...
+                            </option>
+                            {personasOptions.map((num) => (
+                              <option key={num} value={num} style={{ color: "black" }}>
+                                {num} {num === 1 ? "persona" : "personas"}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    {/* Row 3: Fecha + Hora */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <motion.div
+                        initial={{ opacity: 0, x: -15 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 }}
+                      >
+                        <label className={labelBase}>
+                          <span className="flex items-center gap-1.5">
+                            <Calendar className="w-3 h-3" />
+                            Fecha
+                          </span>
+                        </label>
+                        <input
+                          type="date"
+                          name="fecha"
+                          value={form.fecha}
+                          onChange={handleChange}
+                          required
+                          min={today}
+                          className={inputBase}
+                          style={{ colorScheme: "dark" }}
+                        />
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, x: 15 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.35 }}
+                      >
+                        <label className={labelBase}>
+                          <span className="flex items-center gap-1.5">
+                            <Clock className="w-3 h-3" />
+                            Hora
+                          </span>
+                        </label>
+                        <div className="relative">
+                          <select
+                            name="hora"
+                            value={form.hora}
+                            onChange={handleChange}
+                            required
+                            className={`${inputBase} appearance-none`}
+                          >
+                            <option value="" disabled hidden>
+                              Selecciona...
+                            </option>
+                            {timeSlots.map((time) => (
+                              <option key={time} value={time} style={{ color: "black" }}>
+                                {time}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    {/* Row 4: Notas */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <label className={labelBase}>
+                        <span className="flex items-center gap-1.5">
+                          <FileText className="w-3 h-3" />
+                          Notas especiales (Opcional)
+                        </span>
+                      </label>
+                      <textarea
+                        name="notas"
+                        value={form.notas}
+                        onChange={handleChange}
+                        rows={3}
+                        placeholder="Alergias, trona para bebé, etc."
+                        className={`${inputBase} resize-none`}
+                      />
+                    </motion.div>
+
+                    {/* Submit Button */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.45 }}
+                      className="pt-2"
+                    >
+                      <button
+                        type="submit"
+                        disabled={status === "loading"}
+                        className="w-full py-4 rounded-lg flex items-center justify-center gap-2 text-white font-bold uppercase tracking-widest text-sm transition-all duration-300 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden"
+                        style={{ backgroundColor: "#C4922A" }}
+                      >
+                        <span className="relative z-10 flex items-center gap-2">
+                          {status === "loading" ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Procesando...
+                            </>
+                          ) : (
+                            "Confirmar Reserva"
+                          )}
+                        </span>
+                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                      </button>
+                    </motion.div>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}

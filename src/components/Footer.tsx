@@ -1,5 +1,23 @@
-import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Twitter } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
+import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Twitter, Navigation } from "lucide-react";
+
+const LAT = 40.4817;
+const LON = -3.3639;
+const LABEL = "Bar Carolina, Alcalá de Henares";
+
+function getMapsUrl(): string {
+  const ua = navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !(window as unknown as Record<string, unknown>).MSStream;
+  const isAndroid = /Android/.test(ua);
+
+  if (isIOS) {
+    return `maps://maps.apple.com/?ll=${LAT},${LON}&q=${encodeURIComponent(LABEL)}`;
+  }
+  if (isAndroid) {
+    return `geo:${LAT},${LON}?q=${LAT},${LON}(${encodeURIComponent(LABEL)})`;
+  }
+  return `https://www.google.com/maps/search/?api=1&query=${LAT},${LON}`;
+}
 
 const Footer = () => {
   const currentYear = 2026;
@@ -16,7 +34,7 @@ const Footer = () => {
     { icon: Twitter, label: "Twitter", href: "#" },
   ];
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -27,7 +45,7 @@ const Footer = () => {
     },
   };
 
-  const columnVariants = {
+  const columnVariants: Variants = {
     hidden: { opacity: 0, y: 24 },
     visible: {
       opacity: 1,
@@ -269,22 +287,75 @@ const Footer = () => {
                 </span>
               </motion.a>
             </div>
-
-            {/* Mapa / CTA */}
-            <motion.a
-              href="#"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              style={{
-                borderColor: "#C4922A",
-                color: "#C4922A",
-              }}
-              className="mt-2 px-5 py-2 border rounded-sm text-xs font-semibold uppercase tracking-widest transition-colors duration-200 hover:bg-amber-800"
-            >
-              Cómo llegar
-            </motion.a>
           </motion.div>
         </div>
+
+        {/* Mini-mapa interactivo — fila completa */}
+        <motion.div
+          variants={columnVariants}
+          className="mt-10 relative rounded-2xl overflow-hidden"
+          style={{
+            height: "200px",
+            border: "1px solid rgba(196,146,42,0.35)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
+          }}
+        >
+          {/* Iframe OpenStreetMap */}
+          <iframe
+            src={`https://www.openstreetmap.org/export/embed.html?bbox=${LON - 0.006},${LAT - 0.003},${LON + 0.006},${LAT + 0.003}&layer=mapnik&marker=${LAT},${LON}`}
+            width="100%"
+            height="100%"
+            style={{
+              border: 0,
+              display: "block",
+              filter: "sepia(25%) saturate(85%) brightness(0.92)",
+            }}
+            loading="lazy"
+            title="Ubicación Bar Carolina en Alcalá de Henares"
+            aria-label="Mapa interactivo de Bar Carolina"
+          />
+
+          {/* Overlay gradiente inferior para integrar con el footer */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-10 pointer-events-none"
+            style={{
+              background: "linear-gradient(to top, rgba(139,26,26,0.35) 0%, transparent 100%)",
+            }}
+          />
+
+          {/* Etiqueta del lugar */}
+          <div
+            className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold pointer-events-none"
+            style={{
+              backgroundColor: "rgba(139,26,26,0.92)",
+              color: "#F5E6D3",
+              border: "1px solid rgba(196,146,42,0.4)",
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <MapPin size={11} style={{ color: "#C4922A" }} />
+            Bar Carolina · Alcalá de Henares
+          </div>
+
+          {/* Botón "Abrir en Maps" */}
+          <motion.button
+            onClick={() => {
+              const url = getMapsUrl();
+              window.open(url, "_blank", "noopener,noreferrer");
+            }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.96 }}
+            className="absolute bottom-3 right-3 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide shadow-lg cursor-pointer"
+            style={{
+              backgroundColor: "#8B1A1A",
+              color: "#F5E6D3",
+              border: "1px solid rgba(196,146,42,0.55)",
+            }}
+          >
+            <Navigation size={12} style={{ color: "#C4922A" }} />
+            Abrir en Maps
+          </motion.button>
+        </motion.div>
 
         {/* Separador decorativo */}
         <motion.div
@@ -312,4 +383,22 @@ const Footer = () => {
 
         {/* Copyright */}
         <motion.div
-          initial={{ opacity:
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="text-center"
+        >
+          <p
+            style={{ color: "rgba(245,230,211,0.6)" }}
+            className="text-xs tracking-wider"
+          >
+            © {currentYear} Bar Carolina. Todos los derechos reservados.
+          </p>
+        </motion.div>
+      </motion.div>
+    </footer>
+  );
+};
+
+export default Footer;
